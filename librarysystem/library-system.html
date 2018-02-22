@@ -1,0 +1,200 @@
+<script src="simpletest.js"></script>
+<script src="adder.js"></script>
+<script>
+
+(function () {
+
+  //Create an object to store the libraries
+  var libraryStorage = {};
+
+  function librarySystem (libraryName, otherLibraryNames, callback) {
+
+
+    var getOtherLibraryProps = [];
+
+    if (arguments.length > 2) {
+
+      //Access multiple properties in the libraryStorage and push them into an empty array
+      otherLibraryNames.forEach(function (value) {
+        return getOtherLibraryProps.push(libraryStorage[value]);
+      })
+      //Create a library
+      libraryStorage[libraryName] = callback.apply(this, getOtherLibraryProps);
+
+    } else {
+
+      //Put out the requested library
+        return libraryStorage[libraryName];
+    }
+  }
+
+  //Attach librarySystem to the window
+  window.librarySystem = librarySystem;
+
+})();
+
+tests({
+  // baseline test
+  'It should return the library when empty dependency array added': function() {
+    librarySystem('dependency', [], function() {
+      return 'loaded dependency';
+    });
+    eq(librarySystem('dependency'), 'loaded dependency');
+  },
+   'It should return the app library plus the dependency': function() {
+    librarySystem('app', ['dependency'], function(dependency) {
+      return 'app with ' + dependency;
+    });
+    eq(librarySystem('app'), 'app with loaded dependency');
+  },
+  'It should return the name of the library, which is Gordon': function() {
+    librarySystem('name', [], function() {
+      return 'Gordon';
+    });
+    eq(librarySystem('name'), 'Gordon');
+  },
+  'It should return the company name of the library, which is Watch and Code': function() {
+    librarySystem('company', [], function() {
+      return 'Watch and Code';
+    });
+    eq(librarySystem('company'), 'Watch and Code');
+  },
+  'It should return the name and the company': function() {
+    librarySystem('workBlurb', ['name', 'company'], function(name, company) {
+      return name + ' works at ' + company;
+    });
+    eq(librarySystem('workBlurb'), 'Gordon works at Watch and Code');
+  },
+  // Adding additional tests to test three dependencies
+  'It should return the name of the language': function() {
+    librarySystem('language', [], function() {
+      return 'JavaScript';
+    });
+    eq(librarySystem('language'), 'JavaScript');
+  },
+  'It should return three dependencies': function() {
+    librarySystem('courseBlurb', ['name', 'company', 'language'], function(name, company, language) {
+      return name + ' at ' + company + ' is an incredible teacher of ' + language;
+    });
+    eq(librarySystem('courseBlurb'), 'Gordon at Watch and Code is an incredible teacher of JavaScript');
+  },
+
+  'It should have access to the function with one global variable.': function () {
+    var functionInterface = Boolean(librarySystem);
+	eq(functionInterface, true);
+  },
+  'It should run the callback function when given.': function(){
+    var count = 0;
+	librarySystem('test',[],function(){
+	  count++;
+	});
+	eq(count,1);
+  },
+  'It should return the library when empty dependencyArray is given.': function(){
+    librarySystem('firstName', [], function(){
+	  return 'anton';
+	});
+	var test = librarySystem('firstName')
+	eq(test, 'anton')
+  },
+  'It should return the library with the dependencies.': function(){
+	librarySystem('pangalan', [], function(){
+	  return 'anton';
+	});
+	librarySystem('introduction',['pangalan'], function(name){
+	  return 'My name is ' + name;
+	});
+	var check = librarySystem('introduction');
+	eq(check,'My name is anton');
+  },
+  'It should return or have access to all dependencies.': function(){
+	librarySystem('one', [], function(){
+	  return '1';
+	});
+	librarySystem('two', [], function(){
+	  return '2';
+	});
+	librarySystem('three', [], function(){
+	  return '3';
+	});
+	librarySystem('oneTwoThree',['one','two','three'],function(one,two,three){
+	  return one + two + three;
+	});
+	var count = librarySystem('oneTwoThree');
+	eq(count,'123')
+  },
+  'it should have access to the librarySystem': function() {
+		eq(typeof librarySystem !== 'undefined', true);
+  },
+  'it should have access to a single loaded library': function() {
+		var sandwichLib = librarySystem('app');
+		eq(typeof sandwichLib !== 'undefined', true);
+	},
+	'it can save new librarys / modules without dependencies': function() {
+
+		librarySystem('testLib', [], function() {
+			return 'myTestLib';
+		})
+		var testTheTestLib = librarySystem('testLib');
+		eq(typeof testTheTestLib !== 'undefined', true);
+	},
+	/** Tests for the new librarySystem with dependencies **/
+	'it should pass in the strings from array into the callback arguments': function() {
+		librarySystem('app', ['dependency'], function(dependency) {
+
+  			return 'app with ' + dependency;
+		});
+
+		eq(librarySystem('app'), 'app with loaded dependency');
+	},
+	'it should be able to be flexible enough to accept any number of dependencies': function() {
+		librarySystem('name', [], function() {
+		  return 'Gordon';
+		});
+
+		librarySystem('company', [], function() {
+		  return 'Watch and Code';
+		});
+
+		librarySystem('workBlurb', ['name', 'company'], function(name, company) {
+		  return name + ' works at ' + company;
+		});
+
+		librarySystem('workBlurb'); // 'Gordon works at Watch and Code'
+	},
+
+  'It should be able to create a library using the callback': function() {
+    librarySystem('app', [], function() {
+      return 'app';
+    })
+    eq(librarySystem('app'), 'app');
+  },
+
+  'It should be able to create library that can depend on one other library.': function() {
+    librarySystem('dependency', [], function () {
+      return 'loaded dependency';
+    });
+    librarySystem('app', ['dependency'], function (dependency) {
+      return 'app with ' + dependency;
+    });
+    eq(librarySystem('app'), 'app with loaded dependency');
+  },
+
+  'It should be able to create library that can depend on multiple libraries.': function() {
+    librarySystem('name', [], function () {
+       return 'Gordon';
+    });
+    librarySystem('company', [], function () {
+       return 'Watch and Code'
+    });
+    librarySystem('workBlurb', ['name', 'company'], function (name, company) {
+       return name + ' works at ' + company
+    });
+    eq(librarySystem('workBlurb'), 'Gordon works at Watch and Code');
+  }
+});
+
+
+
+
+</script>

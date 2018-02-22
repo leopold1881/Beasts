@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>isPrototypeOf</title>
+<script src="simpletest.js"></script>
+<script src="isPrototypeOf-recursive.js"></script>
+<script>
+var dog = {
+  fetch: function() {
+    console.log(fetch);
+  }
+};
+var myDog = Object.create(dog);
+var empty = Object.create(null);
+var james = {
+  name: 'james sq.',
+  age: 27
+};
+var james2 = Object.create(james);
+james2.favTeam = 'clemson tigers';
+var james3 = Object.create(james2);
+james3.favColor = 'orange';
+var randomObject = {};
+var a = {};
+
+tests({
+  '--- tiff\'s tests ---': function() {},
+  'it should return `true` if prototypeObj is a prototype of callingObj': function() {
+    eq(isPrototypeOf(dog, myDog), true);
+    eq(isPrototypeOf(Object.prototype, myDog), true);
+  },
+  'it should return `false` if prototypeObj is not a prototype of callingObj': function() {
+    eq(isPrototypeOf(Object.prototype, empty), false);
+  },
+  'it should throw a TypeError if prototypeObj is undefined or null': function() {
+    try {
+      isPrototypeOf(undefined, {});
+    } catch (e) {
+      eq(e instanceof TypeError, true);
+    }
+  },
+  '--- ivo\'s tests ---': function() {},
+  'It should return true if the object in the first argument has the object in the second argument as its prototype.': function () {
+    eq(isPrototypeOf(dog, myDog), true);
+  },
+  'It should return false if the object in the first argument doesn`t have the object in the second argument as its prototype.': function () {
+    eq(isPrototypeOf(dog, empty), false);
+  },
+  'It should also return true if the prototype chain is indirect.': function () {
+    eq(isPrototypeOf(Object.prototype, myDog), true);
+  },
+  'It should be able to compare the built-in String': function () {
+    eq(isPrototypeOf(String.prototype, 'two'), true);
+  },
+  'It should be able to compare the built-in Array.': function () {
+    eq(isPrototypeOf(Array.prototype, []), true);
+  },
+  'It should throw a TypeError if the prototype argument is undefined or null.': function () {
+    var errorWasThrown = false;
+    try {
+      isPrototypeOf(undefined, {});
+    }
+    catch (e) {
+      errorWasThrown = true;
+      eq(e instanceof TypeError, true);
+    }
+    eq(errorWasThrown, true);
+  },
+  '--- monofysics\' tests ---': function() {},
+  'Should return true if `prototypeObject` exists down the prototype chain of `targetObject`.' : function () {
+      var c = Object.create(a);
+      eq(isPrototypeOf(Object.prototype, c), true);
+  },
+  'Should return false if `prototypeObject` does not exist in the prototype chain of `targetObject`.' : function () {
+      var d = Object.create(null);
+      eq(isPrototypeOf(d, a), false);
+  },
+
+  'Should return false if `targetObject` is null.' : function () {
+      eq(isPrototypeOf(a, null), false);
+  },
+  '--- james\' tests ---': function() {},
+  'james object should be linked to Object.prototype': function() {
+    var testOne = isPrototypeOf(Object.prototype, james);
+    eq(testOne, true);
+  },
+  'james2 object should be linked to james object prototype': function() {
+    var testTwo = isPrototypeOf(james, james2);
+    eq(testTwo === james.isPrototypeOf(james2), true);
+  },
+  'randomObject should not be linked to james prototype': function() {
+    var testThree = isPrototypeOf(james, randomObject);
+    eq(testThree === false, true);
+  },
+  'empty object with NO prototype should NOT be linked to Object.prototype.': function() {
+    var testFour = isPrototypeOf(Object.prototype, empty);
+    eq(testFour === false, true);
+  },
+  '--- nate\'s tests ---': function() {},
+  'It should return true if prototypeObj is the prototype of object.': function() {
+    var skater = {
+        kickflip: function() {
+            console.log("*Does a kickflip*");
+        }
+    };
+    var tyler = Object.create(skater);
+    var testResult = isPrototypeOf(skater, tyler);
+    eq(testResult, true);
+  },
+  'It should return true if prototypeObj is anywhere on the prototype chain of object.': function() {
+    var ninja = {
+        backflip: function() {
+            console.log("*Does a triple backflip*");
+        }
+    };
+    var reptile = Object.create(ninja);
+    var testResult = isPrototypeOf(Object.prototype, reptile);
+    eq(testResult, true);
+  },
+  'It should return false if prototypeObj is not on the prototype chain of object.': function() {
+    var vincent = {};
+    var tony = {};
+    var testResult = isPrototypeOf(vincent, tony);
+    eq(testResult, false);
+  },
+  'It should return false if obj is null': function() {
+    var dog = {
+      fetch: function() {
+        console.log(fetch);
+      }
+    };
+    var myDog = Object.create(dog);
+    var empty = Object.create(null);
+    var testResult = isPrototypeOf(dog, empty);
+    eq(testResult, false);
+  },
+  'It should throw an exception if prototypeObj is undefined with one arg.': function () {
+    var thrownError,
+    errorTestObject;
+    try {
+      isPrototypeOf(errorTestObject);
+    }
+    catch (e) {
+      thrownError = true;
+      eq(e instanceof TypeError, true);
+    }
+    eq(thrownError, true);
+  },
+  'It should throw an exception if prototypeObj is undefined with two args.': function () {
+    var thrownError2,
+    errorTestObject2,
+    workingObject = {};
+    try {
+      isPrototypeOf(errorTestObject2, workingObject);
+    }
+    catch (e) {
+      thrownError2 = true;
+      eq(e instanceof TypeError, true);
+    }
+    eq(thrownError2, true);
+  }
+});
+</script>
+</head>
+<body></body>
+</html>

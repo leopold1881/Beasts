@@ -1,0 +1,30 @@
+<script>
+
+function sayFullName(first,last) {
+  console.log(first + ' ' + last);
+}
+
+function sayHiTo(name) {
+	console.log('hi ' + name);
+}
+
+function say123(one, two, three){
+  console.log(one + ' ' + two + ' ' + three);
+}
+
+function runWithDebuggerES5(callback, array){
+	debugger;
+  callback.apply(this, array);
+
+}
+
+function runWithDebuggerES6(callback, array){
+  debugger;
+  callback(...array);
+}
+
+runWithDebugger(sayHiTo, ['gordon','zhu'])
+runWithDebugger(sayFullName, ['gordon','zhu'])
+runWithDebugger(say123, ['One','Two','Three'])
+
+</script>
