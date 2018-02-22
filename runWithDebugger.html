@@ -13,13 +13,10 @@ function say123(one, two, three){
 }
 
 function runWithDebuggerES5(callback, array){
-	debugger;
   callback.apply(this, array);
-
 }
 
 function runWithDebuggerES6(callback, array){
-  debugger;
   callback(...array);
 }
 
